@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Géolocalisation</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsYZ3wivigyi9IV6EwUYkMsgtqxL9df_E
+    &libraries=places"></script>
+</head>
+<body>
+    <div class="container home">
+        <h2>Bienvenue, {{ user.username }}!</h2>
+        <button><a href="{% url 'deconnexion' %}">Déconnexion</a></button>
+    </div><br/><br/><br/>
+    <div class="container home">
+        <p>Cliquez sur le bouton pour obtenir votre géolocalisation.</p>
+        <button onclick="obtenirMaPosition()">Obtenir Ma Position</button>
+    </div>
+    <div id="map"></div> <!-- Conteneur pour la carte Google Maps -->
+    <div class="container home">
+        <h3>Liste des Parkings</h3>
+        <ul id="list-parkings"></ul>
+    </div>
+    <style>
+        /* Styles pour le conteneur de la carte */
+        #map {
+            height: 400px; /* Hauteur de la carte */
+            width: 100%; /* Largeur de la carte */
+        }
+    </style>
+    <script>
+        var map;
+        var infowindow;
+
+        function obtenirMaPosition() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+                        afficherSurCarte(latitude, longitude);
+                    },
+                    function(error) {
+                        console.error("Erreur de géolocalisation", error);
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                console.log("La géolocalisation n'est pas supportée par ce navigateur.");
+            }
+        }
+
+        function afficherSurCarte(lat, long) {
+            var mapOptions = {
+                zoom: 15,
+                center: {lat: lat, lng: long},
+            };
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            infowindow = new google.maps.InfoWindow();
+
+            rechercheParkings(lat, long); // Appeler la recherche de parkings ici
+
+            var marker = new google.maps.Marker({
+                position: {lat: lat, lng: long},
+                map: map,
+            });
+        }
+
+        function rechercheParkings(lat, long) {
+            var service = new google.maps.places.PlacesService(map);
+            service.nearbySearch({
+                location: {lat: lat, lng: long},
+                radius: 100000, // En mètres, ajustez selon vos besoins
+                type: ['parking'] // Type de lieu à rechercher
+            }, callback);
+        }
+
+        function callback(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                var listParkings = document.getElementById('list-parkings');
+                listParkings.innerHTML = ''; // Vide la liste avant d'y ajouter de nouveaux éléments
+                for (var i = 0; i < results.length; i++) {
+                    createMarker(results[i]);
+                    var listItem = document.createElement('li');
+                    listItem.textContent = results[i].name + ', ' + results[i].vicinity; // Affiche le nom et la proximité du parking
+                    listParkings.appendChild(listItem);
+                }
+            }
+        }
+
+        function createMarker(place) {
+            var placeLoc = place.geometry.location;
+            var marker = new google.maps.Marker({
+                map: map,
+                position: placeLoc
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+                infowindow.setContent(place.name);
+                infowindow.open(map, this);
+            });
+        }
+    </script>
+</body>
+</html>

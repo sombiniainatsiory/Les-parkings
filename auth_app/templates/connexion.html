@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="form">
+            <h1>Connexion</h1>
+
+            {% if messages %}
+            <div class="error-messages">
+                {% for message in messages %}
+                <p class="error">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'connexion' %}">
+                {% csrf_token %}
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" name="username"  required>
+                <label for="password">Mot de passe</label>
+                <input type="password" name="password"  required>
+                <button type="submit">Se connecter</button>
+            </form>
+            <p class="link">Pas encore inscrit ? <a href="{% url 'inscription' %}">S'inscrire</a></p>
+        </div>
+    </div>
+
+    <style>
+
+        /* Adjusted general styles */
+            body {
+                font-family: 'Roboto', sans-serif;
+                background: linear-gradient(to right, #22c3c0, #1a8b89); /* Updated gradient colors */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .container {
+                width: 400px;
+                padding: 30px;
+                background: linear-gradient(#444, #555); /* Dark gradient */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.1);
+                border-radius: 15px;
+                backdrop-filter: blur(10px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+
+            .form h1 {
+                text-align: center;
+                color: #29d9d5; /* Light blue for headings */
+                margin-bottom: 30px;
+                font-size: 24px;
+            }
+
+            .error-messages .error {
+                color: #666; /* Dark gray for errors */
+                margin-bottom: 15px;
+                font-weight: bold;
+            }
+
+            form label {
+                display: block;
+                margin-top: 20px;
+                color: #666; /* Dark gray for labels */
+            }
+
+            form input[type="text"],
+            form input[type="password"] {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 10px;
+                font-size: 14px;
+                border-color: #888;
+            }
+
+            form button {
+                background-color: #29d9d5; /* Light blue for the button */
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 12px 24px;
+                cursor: pointer;
+                margin-top: 15px;
+                font-size: 16px;
+                transition: all 0.3s ease;
+            }
+
+            form button:hover {
+                background-color: #22c3c0; 
+            }
+
+            .link {
+                text-align: center;
+                margin-top: 30px;
+                color: #666;
+            }
+
+            .link a {
+                color: #29d9d5;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%; /* Ensure the form takes full width */
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px; /* Adds space between form elements */
+            }
+
+            button {
+                order: 2; /* Ensures the button comes after the inputs */
+            }
+
+            body, .form h1, .error-messages .error, form label, .link {
+                color: #ccc; /* Lighter text color for better visibility */
+            }
+
+    </style>
+</body>
+</html>
